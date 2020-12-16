@@ -3,6 +3,8 @@ from os.path import join
 from distutils.util import strtobool
 import dj_database_url
 from configurations import Configuration
+from pathlib import Path
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -15,16 +17,13 @@ class Common(Configuration):
         'django.contrib.sessions',
         'django.contrib.messages',
         'django.contrib.staticfiles',
-
-
         # Third party apps
-        'rest_framework',            # utilities for rest apis
+        'rest_framework',  # utilities for rest apis
         'rest_framework.authtoken',  # token authentication
-        'django_filters',            # for filtering rest endpoints
-
+        'django_filters',  # for filtering rest endpoints
         # Your apps
         'scoreboard.users',
-
+        'scoreboard.scores',
     )
 
     # https://docs.djangoproject.com/en/2.0/topics/http/middleware/
@@ -46,16 +45,22 @@ class Common(Configuration):
     # Email
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-    ADMINS = (
-        ('Author', 'kristijan.suler@gmail.com'),
-    )
+    ADMINS = (('Author', 'kristijan.suler@gmail.com'),)
 
-    # Postgres
+    # # Postgres
+    # DATABASES = {
+    #     'default': dj_database_url.config(
+    #         default='postgres://postgres:@postgres:5432/postgres',
+    #         conn_max_age=int(os.getenv('POSTGRES_CONN_MAX_AGE', 600)),
+    #     )
+    # }
+
+    # Sqlite
     DATABASES = {
-        'default': dj_database_url.config(
-            default='postgres://postgres:@postgres:5432/postgres',
-            conn_max_age=int(os.getenv('POSTGRES_CONN_MAX_AGE', 600))
-        )
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR + '/db.sqlite3',
+        }
     }
 
     # General
@@ -132,9 +137,7 @@ class Common(Configuration):
             'verbose': {
                 'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
             },
-            'simple': {
-                'format': '%(levelname)s %(message)s'
-            },
+            'simple': {'format': '%(levelname)s %(message)s'},
         },
         'filters': {
             'require_debug_true': {
@@ -150,12 +153,12 @@ class Common(Configuration):
             'console': {
                 'level': 'DEBUG',
                 'class': 'logging.StreamHandler',
-                'formatter': 'simple'
+                'formatter': 'simple',
             },
             'mail_admins': {
                 'level': 'ERROR',
-                'class': 'django.utils.log.AdminEmailHandler'
-            }
+                'class': 'django.utils.log.AdminEmailHandler',
+            },
         },
         'loggers': {
             'django': {
@@ -172,11 +175,8 @@ class Common(Configuration):
                 'level': 'ERROR',
                 'propagate': False,
             },
-            'django.db.backends': {
-                'handlers': ['console'],
-                'level': 'INFO'
-            },
-        }
+            'django.db.backends': {'handlers': ['console'], 'level': 'INFO'},
+        },
     }
 
     # Custom user app
@@ -197,5 +197,5 @@ class Common(Configuration):
         'DEFAULT_AUTHENTICATION_CLASSES': (
             'rest_framework.authentication.SessionAuthentication',
             'rest_framework.authentication.TokenAuthentication',
-        )
+        ),
     }
