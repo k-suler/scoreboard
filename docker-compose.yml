@@ -1,4 +1,4 @@
-version: '2'
+version: "2"
 
 services:
   postgres:
@@ -10,8 +10,7 @@ services:
     image: web
     build: ./
     command: >
-      bash -c "python wait_for_postgres.py &&
-               ./manage.py migrate &&
+      bash -c "./manage.py migrate &&
                ./manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./:/code
